@@ -1,52 +1,77 @@
 package com.demo.controller;
-
-import java.util.List;
+  
+import com.demo.model.Employee;
+import com.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.demo.model.Employee;
-import com.demo.service.EmployeeService;
 
-//mark class as Controller   
-@RestController
+
+@Controller
+@RequestMapping("/employee/")
 public class EmployeeController {
-//autowire the employeeService class  
-	@Autowired
-	EmployeeService employeeService;
 
-	@GetMapping("/employee")
-	private List<Employee> getAllEmployee() {
-		return employeeService.getAllEmployee();
-	}
+    private final EmployeeRepository employeeRepository;
 
-	@GetMapping("/employee/{age}")
-	public List<Employee> getByAge(@PathVariable("age") int age) {
-        return employeeService.getEmployeeByAge(age);
+    @Autowired
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
-//creating a delete mapping that deletes a specified employee 
-	@DeleteMapping("/employee/{id}")
-	private void deleteEmployee(@PathVariable("id") int id) {
-		employeeService.delete(id);
-	}
+    @GetMapping("signup")
+    public String showSignUpForm(Employee employee) {
+        return "add-employee";
+    }
 
-//creating post mapping that post the employee detail in the database  
-	@PostMapping("/employee")
-	private String saveEmployee(@RequestBody Employee employee) {
-		employeeService.saveOrUpdate(employee);
-		return employee.getname();
-	}
+    @GetMapping("list")
+    public String showUpdateForm(Model model) {
+        model.addAttribute("employee", employeeRepository.findAll());
+        return "index";
+    }
 
-//creating put mapping that updates the employee detail   
-	@PutMapping("/employee")
-	private Employee update(@RequestBody Employee employee) {
-		employeeService.saveOrUpdate(employee);
-		return employee;
-	}
+    @PostMapping("add")
+    public String addEmployee( Employee employee, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "add-employee";
+        }
+
+        employeeRepository.save(employee);
+        return "redirect:list";
+    }
+
+    @GetMapping("edit/{id}")
+    public String showUpdateForm(@PathVariable("id") int id, Model model) {
+    	Employee employee= employeeRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+        model.addAttribute("employee", employee);
+        return "update-employee";
+    }
+
+    @PostMapping("update/{id}")
+    public String updateEmployee(@PathVariable("id") int id, Employee employee, BindingResult result,
+        Model model) {
+        if (result.hasErrors()) {
+        	employee.setId(id);
+            return "update-employee";
+        }
+
+        employeeRepository.save(employee);
+        model.addAttribute("employee", employeeRepository.findAll());
+        return "index";
+    }
+
+    @GetMapping("delete/{id}")
+    public String deleteStudent(@PathVariable("id") int id, Model model) {
+    Employee employee = employeeRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
+    employeeRepository.delete(employee);
+        model.addAttribute("employee", employeeRepository.findAll());
+        return "index";
+    }
 }

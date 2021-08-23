@@ -14,7 +14,7 @@ public class EmployeeService {
 	@Autowired
 	EmployeeRepository employeeRepository;
 
-//getting all books record by using the method findaAll() of CrudRepository  
+//getting all employee record by using the method findaAll() of CrudRepository  
 	public List<Employee> getAllEmployee() {
 		List<Employee> employee = new ArrayList<Employee>();
 		employeeRepository.findAll ().forEach(employee1 -> employee.add(employee1));
@@ -23,7 +23,7 @@ public class EmployeeService {
 
 //getting a specific record by using the method findById() of CrudRepository  
 	public List<Employee> getEmployeeByAge(int age) {
-		return employeeRepository.FindByAge(age);
+		return employeeRepository.findByAge(age);
 	}
 
 //saving a specific record by using the method save() of CrudRepository  
