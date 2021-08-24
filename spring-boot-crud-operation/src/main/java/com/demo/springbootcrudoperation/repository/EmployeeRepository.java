@@ -1,9 +1,10 @@
-package com.demo.repository;
+package com.demo.springbootcrudoperation.repository;
 
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
-import com.demo.model.Employee;
+
+import com.demo.springbootcrudoperation.model.Employee;
 
 //repository that extends CrudRepository  
 public interface EmployeeRepository extends CrudRepository<Employee, Integer> {

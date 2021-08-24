@@ -1,12 +1,12 @@
-package com.demo.service;
+package com.demo.springbootcrudoperation.service;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.demo.model.Employee;
-import com.demo.repository.EmployeeRepository;
+import com.demo.springbootcrudoperation.model.Employee;
+import com.demo.springbootcrudoperation.repository.EmployeeRepository;
 
 //defining the business logic  
 @Service
@@ -14,7 +14,7 @@ public class EmployeeService {
 	@Autowired
 	EmployeeRepository employeeRepository;
 
-//getting all employee record by using the method findaAll() of CrudRepository  
+//getting all employee  record by using the method findaAll() of CrudRepository  
 	public List<Employee> getAllEmployee() {
 		List<Employee> employee = new ArrayList<Employee>();
 		employeeRepository.findAll ().forEach(employee1 -> employee.add(employee1));
