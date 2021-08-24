@@ -1,7 +1,6 @@
 package com.demo.springbootcrudoperation.controller;
   
-import com.demo.springbootcrudoperation.model.Employee;
-import com.demo.springbootcrudoperation.repository.EmployeeRepository;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 //import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.demo.springbootcrudoperation.model.Employee;
+import com.demo.springbootcrudoperation.repository.EmployeeRepository;
+
 
 @Controller
 public class EmployeeController {
@@ -20,18 +22,21 @@ public class EmployeeController {
     private EmployeeRepository employeeRepository;
 
     @GetMapping("/signup")
-    public String showSignUpForm() {
+    public String showSignUpForm(Model model) {
+        Employee employee= new Employee();
+        model.addAttribute(employee);
         return "add-employee";
     }
 
     @GetMapping("/list")
     public String showUpdateForm(Model model) {
-        model.addAttribute("employee", employeeRepository.findAll());
+        List<Employee> employeeList =  (List<Employee>)employeeRepository.findAll();
+        model.addAttribute("employeeList", employeeList);
         return "index";
     }
 
     @PostMapping("/add")
-    public String addEmployee( Employee employee, BindingResult result, Model model) {
+    public String addEmployee(Employee employee, BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "add-employee";
         }
@@ -57,7 +62,7 @@ public class EmployeeController {
         }
 
         employeeRepository.save(employee);
-        model.addAttribute("employee", employeeRepository.findAll());
+        model.addAttribute("employeeList", employeeRepository.findAll());
         return "index";
     }
 
@@ -66,7 +71,7 @@ public class EmployeeController {
     Employee employee = employeeRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Invalid employee Id:" + id));
     employeeRepository.delete(employee);
-        model.addAttribute("employee", employeeRepository.findAll());
+        model.addAttribute("employeeList", employeeRepository.findAll());
         return "index";
     }
 }
